@@ -1,0 +1,21 @@
+#!/usr/bin/env ruby
+
+require 'kexp-playlist'
+require 'optparse'
+
+options = {}
+OptionParser.new do |parser|
+  parser.on("-s", "--start DateTime", "Start time to fetch playlist") do |value|
+    options[:start] = value
+  end
+  parser.on("-t", "--time", "Print timestamp of each song") do |value|
+    options[:time] = true
+  end
+end.parse!
+
+if options[:start].nil?
+  puts "Start Time Required"
+  exit(1)  
+end
+
+Kexp::Playlist::Query.call(options)
