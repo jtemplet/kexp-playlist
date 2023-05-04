@@ -6,7 +6,7 @@ This script makes it easier to get the KEXP playlist and print it in a more read
 ### Installation
 
 ```sh
-$ gem install kexp-playlist
+$ gem install kexp-playlist --user-install
 ```
 
 ### Usage
