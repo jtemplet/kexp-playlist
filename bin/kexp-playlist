@@ -5,7 +5,7 @@ require 'optparse'
 
 options = {}
 OptionParser.new do |parser|
-  parser.on("-s", "--start DateTime", "Start time to fetch playlist") do |value|
+  parser.on("-s", "--start Date", "Start date to fetch playlist") do |value|
     options[:start] = value
   end
   parser.on("-t", "--time", "Print timestamp of each song") do |value|
@@ -14,7 +14,7 @@ OptionParser.new do |parser|
 end.parse!
 
 if options[:start].nil?
-  puts "Start Time Required"
+  puts "Start Date Required"
   exit(1)  
 end
 

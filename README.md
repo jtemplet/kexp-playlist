@@ -19,7 +19,7 @@ This will print all the songs played on May 3rd, 2023 in sequential order
 
 | Flag      | Description | Required? | Parameter? |
 | ----------- | ----------- | ----------- | ----------- |
-| -s      | Start time | Yes | Yes, in a Date format, e.g. '2023-05-01 |
+| -s      | Start date | Yes | Yes, in a Date format, e.g. '2023-05-01 |
 | -t   | Display timestamp?    | No | No |
 
 

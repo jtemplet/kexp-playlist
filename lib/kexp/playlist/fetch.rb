@@ -2,12 +2,13 @@ require 'uri'
 require 'net/http'
 require 'json'
 require 'date'
+require 'time'
 
 module Kexp
   module Playlist
     class Fetch
       def initialize(start_time)
-        @start_time = DateTime.parse(start_time)
+        @start_time = Time.parse(start_time) + 1*60*60
       end
     
       def call
@@ -31,9 +32,9 @@ module Kexp
 
       def query_params
         {
-          limit: 100,
+          limit: 250,
           ordering: "-airdate",
-          airdate_before: time_to_utc(@start_time),
+          airdate_after: @start_time.strftime('%Y-%m-%dT%H:%M'),
           offset: 0
         }
       end
