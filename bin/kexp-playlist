@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 
-require 'kexp-playlist'
+require_relative '../lib/kexp-playlist'
 require 'optparse'
 
 options = {}
