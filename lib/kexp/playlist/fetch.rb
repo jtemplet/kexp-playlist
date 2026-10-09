@@ -7,13 +7,12 @@ require 'time'
 module Kexp
   module Playlist
     class Fetch
-      ONE_HOUR = 60 * 60
-      ONE_DAY = 24 * ONE_HOUR
       PAGE_SIZE = 250
 
       def initialize(start_time, end_time = nil)
-        @start_time = Time.parse(start_time) + ONE_HOUR
-        @end_time = end_time ? Time.parse(end_time) + ONE_HOUR : @start_time + ONE_DAY
+        # DateTime keeps these as plain wall-clock times; the API reads them as Pacific time
+        @start_time = DateTime.parse(start_time)
+        @end_time = end_time ? DateTime.parse(end_time) : @start_time + 1
       end
 
       def call

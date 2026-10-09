@@ -29,6 +29,6 @@ The flow is `bin/kexp-playlist` (OptionParser) -> `Kexp::Playlist::Query.call(op
 ## Things that are easy to miss
 
 - **The gemspec lists files by hand** (`s.files` in `kexp-playlist.gemspec`). When you add a file under `lib/`, add it to that list, or the built gem will not include it. `bin/kexp-playlist` also depends on this: it requires `kexp-playlist`, which only resolves through `-Ilib` or an installed gem.
-- **`Fetch` shifts both the start and end times by +1 hour** (`Time.parse(...) + ONE_HOUR`) before it sends them as `airdate_after` and `airdate_before`. The presenter labels timestamps as `PDT`. Check this offset against the API before you change either one.
+- **All times are Pacific wall-clock time.** The API reads the `airdate_after` and `airdate_before` values as Pacific time (checked for winter, summer, and both DST-change days), so `Fetch` passes the dates through unshifted and adds one calendar day for the default end. The presenter picks PDT or PST per song from the offset in the API's `airdate` (`-07:00` or `-08:00`), because a DST-change day contains both.
 - **Pagination stops on a short page.** The API returns a `next` link even on the last page, so `Fetch` stops when a page has fewer than `PAGE_SIZE` results. The date range is bounded (`airdate_before`) so an old start date does not page through every play up to today.
 - `Fetch#time_to_utc` is never called.
