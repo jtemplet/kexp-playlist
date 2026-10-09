@@ -31,7 +31,4 @@ The flow is `bin/kexp-playlist` (OptionParser) -> `Kexp::Playlist::Query.call(op
 - **The gemspec lists files by hand** (`s.files` in `kexp-playlist.gemspec`). When you add a file under `lib/`, add it to that list, or the built gem will not include it. `bin/kexp-playlist` also depends on this: it requires `kexp-playlist`, which only resolves through `-Ilib` or an installed gem.
 - **`Fetch` shifts the start time by +1 hour** (`Time.parse(start_time) + 1*60*60`) before it sends it as `airdate_after`. The presenter labels timestamps as `PDT`. Check this offset against the API before you change either one.
 - **There is no pagination.** The request sends `limit: 250` and `offset: 0`, so a start date with more than 250 plays after it returns only the newest 250 of them.
-- **Known defects in the current code:**
-  - `validate_response` calls `puts res`, but `res` is not defined (the instance variable is `@res`). A non-2xx response raises `NameError` instead of exiting cleanly.
-  - `Presenter#print_results` ends with `p @start_time.to_s`, but `@start_time` is never set in that class, so it prints `""` after every run.
-  - `Fetch#time_to_utc` is never called.
+- `Fetch#time_to_utc` is never called.

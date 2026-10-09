@@ -21,7 +21,6 @@ module Kexp
           end
           print "\n"
         end
-        p @start_time.to_s
       end
     end
   end

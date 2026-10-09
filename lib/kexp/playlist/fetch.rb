@@ -46,7 +46,7 @@ module Kexp
       def validate_response
         if !@res.is_a?(Net::HTTPSuccess)
           puts "Error fetching from KEXP"
-          puts res
+          puts "#{@res.code} #{@res.message}"
           exit(1)
         end
       end  
