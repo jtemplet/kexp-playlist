@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A small Ruby gem (`kexp-playlist`) that fetches plays from the KEXP public API (`https://api.kexp.org/v2/plays/`) and prints them as `Artist - Song`. It has no runtime dependencies beyond the Ruby standard library, and the repo has no tests, Gemfile, or linter config.
+A small Ruby gem (`kexp-playlist`) that fetches plays from the KEXP public API (`https://api.kexp.org/v2/plays/`) and prints them as three columns: date and time, artist, song. It has no runtime dependencies beyond the Ruby standard library, and the repo has no tests, Gemfile, or linter config.
 
 ## Commands
 
@@ -17,14 +17,14 @@ gem build kexp-playlist.gemspec
 gem install ./kexp-playlist-0.0.0.gem --user-install
 ```
 
-CLI flags: `-s/--start DATE` (required; exits 1 if missing), `-e/--end DATE` (optional; defaults to 24 hours after the start), and `-t/--time` (print each song's timestamp).
+CLI flags: `-s/--start DATE` (required; exits 1 if missing), `-e/--end DATE` (optional; defaults to 24 hours after the start), and `-t/--time` (no effect; the date and time column is always printed).
 
 ## Architecture
 
 The flow is `bin/kexp-playlist` (OptionParser) -> `Kexp::Playlist::Query.call(options)` in `lib/kexp-playlist.rb` -> `Fetch` -> `Presenter`.
 
 - `Fetch` (`lib/kexp/playlist/fetch.rb`) pages through the API (250 plays per request) and returns an array of `{artist:, song:, airdate:}` hashes. Plays with a nil `artist` (such as air breaks) are dropped.
-- `Presenter` (`lib/kexp/playlist/presenter.rb`) prints the hashes. The API returns newest first (`ordering: "-airdate"`), so the presenter reverses the list to print oldest first.
+- `Presenter` (`lib/kexp/playlist/presenter.rb`) prints the hashes. The API returns newest first (`ordering: "-airdate"`), so the presenter sorts by airdate to print oldest first.
 
 ## Things that are easy to miss
 

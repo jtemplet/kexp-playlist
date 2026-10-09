@@ -17,7 +17,7 @@ OptionParser.new do |parser|
   parser.on("-e", "--end DATE", "End date or time (default: 24 hours after the start)") do |value|
     options[:end] = value
   end
-  parser.on("-t", "--time", "Print the time each song played, labeled PDT or PST") do |value|
+  parser.on("-t", "--time", "No effect; the date and time column is always printed (kept so old commands still run)") do |value|
     options[:time] = true
   end
   parser.separator ""
