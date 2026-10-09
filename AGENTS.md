@@ -17,18 +17,18 @@ gem build kexp-playlist.gemspec
 gem install ./kexp-playlist-0.0.0.gem --user-install
 ```
 
-CLI flags: `-s/--start DATE` (required; exits 1 if missing) and `-t/--time` (print each song's timestamp).
+CLI flags: `-s/--start DATE` (required; exits 1 if missing), `-e/--end DATE` (optional; defaults to 24 hours after the start), and `-t/--time` (print each song's timestamp).
 
 ## Architecture
 
 The flow is `bin/kexp-playlist` (OptionParser) -> `Kexp::Playlist::Query.call(options)` in `lib/kexp-playlist.rb` -> `Fetch` -> `Presenter`.
 
-- `Fetch` (`lib/kexp/playlist/fetch.rb`) makes one HTTP GET and returns an array of `{artist:, song:, airdate:}` hashes. Plays with a nil `artist` (such as air breaks) are dropped.
+- `Fetch` (`lib/kexp/playlist/fetch.rb`) pages through the API (250 plays per request) and returns an array of `{artist:, song:, airdate:}` hashes. Plays with a nil `artist` (such as air breaks) are dropped.
 - `Presenter` (`lib/kexp/playlist/presenter.rb`) prints the hashes. The API returns newest first (`ordering: "-airdate"`), so the presenter reverses the list to print oldest first.
 
 ## Things that are easy to miss
 
 - **The gemspec lists files by hand** (`s.files` in `kexp-playlist.gemspec`). When you add a file under `lib/`, add it to that list, or the built gem will not include it. `bin/kexp-playlist` also depends on this: it requires `kexp-playlist`, which only resolves through `-Ilib` or an installed gem.
 - **`Fetch` shifts the start time by +1 hour** (`Time.parse(start_time) + 1*60*60`) before it sends it as `airdate_after`. The presenter labels timestamps as `PDT`. Check this offset against the API before you change either one.
-- **There is no pagination.** The request sends `limit: 250` and `offset: 0`, so a start date with more than 250 plays after it returns only the newest 250 of them.
+- **Pagination stops on a short page.** The API returns a `next` link even on the last page, so `Fetch` stops when a page has fewer than `PAGE_SIZE` results. The date range is bounded (`airdate_before`) so an old start date does not page through every play up to today.
 - `Fetch#time_to_utc` is never called.

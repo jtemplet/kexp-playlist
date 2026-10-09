@@ -7,7 +7,7 @@ module Kexp
     class Query
 
       def self.call(options)
-        results = Kexp::Playlist::Fetch.new(options[:start]).call
+        results = Kexp::Playlist::Fetch.new(options[:start], options[:end]).call
         Kexp::Playlist::Presenter.new(results, options[:time]).call
       end  
     end

@@ -7,22 +7,40 @@ require 'time'
 module Kexp
   module Playlist
     class Fetch
-      def initialize(start_time)
-        @start_time = Time.parse(start_time) + 1*60*60
+      ONE_HOUR = 60 * 60
+      ONE_DAY = 24 * ONE_HOUR
+      PAGE_SIZE = 250
+
+      def initialize(start_time, end_time = nil)
+        @start_time = Time.parse(start_time) + ONE_HOUR
+        @end_time = end_time ? Time.parse(end_time) + ONE_HOUR : @start_time + ONE_DAY
       end
-    
+
       def call
-        execute_request
-        validate_response
-          
-        extract_results
+        results = []
+        uri = build_query
+        while uri
+          page = fetch_page(uri)
+          results.concat(extract_results(page))
+          uri = next_uri(page)
+        end
+        results
       end
-    
+
       private
-    
-      def execute_request
-        @res = Net::HTTP.get_response(build_query)
-      end  
+
+      def fetch_page(uri)
+        res = Net::HTTP.get_response(uri)
+        validate_response(res)
+        JSON.parse(res.body)
+      end
+
+      def next_uri(page)
+        # The API sends a "next" link even on the last page, so a short page is the only end signal
+        return if page["results"].size < PAGE_SIZE
+
+        URI(page["next"])
+      end
 
       def build_query
         uri = URI('https://api.kexp.org/v2/plays/')
@@ -32,27 +50,31 @@ module Kexp
 
       def query_params
         {
-          limit: 250,
+          limit: PAGE_SIZE,
           ordering: "-airdate",
-          airdate_after: @start_time.strftime('%Y-%m-%dT%H:%M'),
-          offset: 0
+          airdate_after: format_time(@start_time),
+          airdate_before: format_time(@end_time)
         }
+      end
+
+      def format_time(time)
+        time.strftime('%Y-%m-%dT%H:%M')
       end
 
       def time_to_utc(timestamp)
         timestamp.to_s
       end
 
-      def validate_response
-        if !@res.is_a?(Net::HTTPSuccess)
+      def validate_response(res)
+        if !res.is_a?(Net::HTTPSuccess)
           puts "Error fetching from KEXP"
-          puts "#{@res.code} #{@res.message}"
+          puts "#{res.code} #{res.message}"
           exit(1)
         end
-      end  
+      end
 
-      def extract_results
-        payload["results"].map do |item|
+      def extract_results(page)
+        page["results"].map do |item|
           next if item["artist"].nil?
           {
             artist: item["artist"],
@@ -61,10 +83,6 @@ module Kexp
           }
         end.compact
       end
-    
-      def payload
-        @payload ||= JSON.parse(@res.body)
-      end      
     end
   end
 end

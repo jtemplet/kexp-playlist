@@ -8,6 +8,9 @@ OptionParser.new do |parser|
   parser.on("-s", "--start Date", "Start date to fetch playlist") do |value|
     options[:start] = value
   end
+  parser.on("-e", "--end Date", "End date to fetch playlist (default: 24 hours after start)") do |value|
+    options[:end] = value
+  end
   parser.on("-t", "--time", "Print timestamp of each song") do |value|
     options[:time] = true
   end
