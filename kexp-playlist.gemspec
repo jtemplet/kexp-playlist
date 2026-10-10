@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.authors     = ["Jason Templeton"]
   s.email       = "jtemple77@gmail.com"
   s.require_paths = ["lib"]
-  s.files       = ["bin/kexp-playlist", "lib/kexp-playlist.rb", "lib/kexp/playlist/fetch.rb", "lib/kexp/playlist/presenter.rb"]
+  s.files       = ["bin/kexp-playlist", "lib/kexp-playlist.rb", "lib/kexp/playlist/fetch.rb", "lib/kexp/playlist/presenter.rb", "lib/kexp/playlist/json_presenter.rb"]
   s.bindir      = 'bin'
   s.executables = ['kexp-playlist']
 end

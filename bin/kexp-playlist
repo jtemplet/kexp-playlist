@@ -20,10 +20,14 @@ OptionParser.new do |parser|
   parser.on("-t", "--time", "No effect; the date and time column is always printed (kept so old commands still run)") do |value|
     options[:time] = true
   end
+  parser.on("-f", "--format FORMAT", %w[text json], "Output format: text (default) or json (an array of airdate, artist, song, album)") do |value|
+    options[:format] = value
+  end
   parser.separator ""
   parser.separator "Examples:"
   parser.separator "  kexp-playlist -s 2023-05-03 -t                              All of May 3rd, 2023"
   parser.separator "  kexp-playlist -s \"2023-05-03 07:00\" -e \"2023-05-03 10:00\"   7 AM to 10 AM"
+  parser.separator "  kexp-playlist -s 2023-05-03 -f json > plays.json            Save the day as JSON"
 end.parse!
 
 if options[:start].nil?
