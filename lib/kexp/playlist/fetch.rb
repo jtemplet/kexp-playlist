@@ -78,6 +78,7 @@ module Kexp
           {
             artist: item["artist"],
             song: item["song"],
+            album: item["album"],
             airdate: DateTime.parse(item["airdate"])
           }
         end.compact

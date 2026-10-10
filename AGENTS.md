@@ -17,13 +17,13 @@ gem build kexp-playlist.gemspec
 gem install ./kexp-playlist-0.0.0.gem --user-install
 ```
 
-CLI flags: `-s/--start DATE` (required; exits 1 if missing), `-e/--end DATE` (optional; defaults to 24 hours after the start), and `-t/--time` (no effect; the date and time column is always printed).
+CLI flags: `-s/--start DATE` (required; exits 1 if missing), `-e/--end DATE` (optional; defaults to 24 hours after the start), `-t/--time` (no effect; the date and time column is always printed), and `-f/--format text|json` (default `text`; `json` prints an array of `{airdate, artist, song, album}` objects, oldest first, for feeding other tools).
 
 ## Architecture
 
-The flow is `bin/kexp-playlist` (OptionParser) -> `Kexp::Playlist::Query.call(options)` in `lib/kexp-playlist.rb` -> `Fetch` -> `Presenter`.
+The flow is `bin/kexp-playlist` (OptionParser) -> `Kexp::Playlist::Query.call(options)` in `lib/kexp-playlist.rb` -> `Fetch` -> `Presenter` (or `JsonPresenter` for `--format json`, chosen in `Query.presenter`).
 
-- `Fetch` (`lib/kexp/playlist/fetch.rb`) pages through the API (250 plays per request) and returns an array of `{artist:, song:, airdate:}` hashes. Plays with a nil `artist` (such as air breaks) are dropped.
+- `Fetch` (`lib/kexp/playlist/fetch.rb`) pages through the API (250 plays per request) and returns an array of `{artist:, song:, album:, airdate:}` hashes. Plays with a nil `artist` (such as air breaks) are dropped.
 - `Presenter` (`lib/kexp/playlist/presenter.rb`) prints the hashes. The API returns newest first (`ordering: "-airdate"`), so the presenter sorts by airdate to print oldest first.
 
 ## Things that are easy to miss
